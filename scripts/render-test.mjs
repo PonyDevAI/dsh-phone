@@ -74,6 +74,7 @@ window.fetch = async function (url, init) {
   if (target.endsWith('devices')) return json({ ok: true, value: { devices: DEVICES, at: Date.now() } })
   if (target.endsWith('screen-info')) return json({ ok: true, value: { width: 1080, height: 2400 } })
   if (target.endsWith('stream')) {
+    if (location.search.indexOf('streamfail') >= 0) return json({ ok: false, error: { message: '未知接口: stream' } })
     if (!STREAM) return json({ ok: false, error: { message: 'no stream fixture' } })
     const bin = atob(STREAM)
     const data = new Uint8Array(bin.length)
@@ -153,6 +154,18 @@ setTimeout(function () {
 setTimeout(function () {
   if (location.hash !== '#float' && location.hash !== '#diag') document.title = 'ready slots=' + Object.keys(captured).join(',')
 }, 2500)
+
+// #fallback：流接口报错时应自动回退截图轮询
+if (location.hash === '#fallback') {
+  setTimeout(function () {
+    const img = document.querySelector('#rootB .dph-screen img')
+    const overlay = document.querySelector('#rootB .dph-overlay')
+    const root = document.querySelector('#rootB .dph-root')
+    document.title = 'fallback img=' + (img ? img.naturalWidth + 'x' + img.naturalHeight : 'none')
+      + ' overlay=' + (overlay ? (overlay.innerText || '').replace(/\s+/g, ' ').slice(0, 30) : 'none')
+      + ' root=' + (root ? 'y' : 'n')
+  }, 4500)
+}
 
 // #stream：用真实 H.264 fixture 走一遍「fetch 流 → WebCodecs → canvas」
 if (location.hash === '#stream') {
