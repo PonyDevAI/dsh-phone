@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.2 — 2026-10-24
+
+### 修复
+- 客户端 bundle 的 `__ModuleLoader__` id 从 `dsh-phone` 改为 `@ponydev/dsh-phone`，修复迁移后 client-modules 报 “loaded without registering” 导致插件加载失败
+
 ## 0.2.1 — 2026-10-24
 
 ### 变更
