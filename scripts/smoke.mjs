@@ -2,7 +2,8 @@
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Adb, ADDRESS_RE, KEYS, SERIAL_RE, classifyDevice, parseDevices, parseGetprop, platformFromProps } from '../lib/adb.js'
+import { Adb, ADDRESS_RE, KEYS, SERIAL_RE, classifyDevice, parseDevices, parseGetprop, parseWmSize, platformFromProps } from '../lib/adb.js'
+import { STREAM_QUALITY, streamSizeFor } from '../lib/stream.js'
 import { createTargetStore } from '../lib/targets.js'
 
 let failures = 0
@@ -76,6 +77,15 @@ if (resolved) {
   console.log('LIVE  adb ' + resolved.version + ' · ' + live.devices.length + ' device(s)')
   if (process.env.SMOKE_TIMEOUT) ok('live timeout error path', true)
 }
+
+// ---------------------------------------------------------------- 分辨率 / 流尺寸
+eq('wm size prefers override', parseWmSize('Physical size: 1080x1920\nOverride size: 1256x2584'), { width: 1256, height: 2584, overridden: true })
+eq('wm size physical fallback', parseWmSize('Physical size: 1080x2400'), { width: 1080, height: 2400, overridden: false })
+eq('stream size pixel 9:20', streamSizeFor({ width: 1080, height: 2400 }, STREAM_QUALITY.medium.shortSide), { width: 540, height: 1200 })
+eq('stream size 720x1280', streamSizeFor({ width: 720, height: 1280 }, STREAM_QUALITY.medium.shortSide), { width: 540, height: 960 })
+eq('stream size override 1256x2584', streamSizeFor({ width: 1256, height: 2584 }, STREAM_QUALITY.medium.shortSide), { width: 540, height: 1110 })
+eq('stream size high clamps to native', streamSizeFor({ width: 720, height: 1280 }, STREAM_QUALITY.high.shortSide), { width: 720, height: 1280 })
+ok('stream size even dims', streamSizeFor({ width: 1081, height: 2401 }, 540).width % 2 === 0)
 
 // ---------------------------------------------------------------- 连接目标存储
 const dir = mkdtempSync(join(tmpdir(), 'dsh-phone-'))

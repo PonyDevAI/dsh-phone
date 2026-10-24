@@ -52,13 +52,15 @@ dsh plugin --profile web add dsh-phone
         streamSize: 540x1200
 ```
 
-客户端清晰度预设（顶部切换，localStorage 记住）：
+客户端清晰度预设（顶部切换，**按设备 serial 分别记忆**）：
 
-| 档位 | size | bitrate |
-|---|---|---|
-| 流畅 | 360x800 | 2 Mbps |
-| 标准 | 540x1200 | 6 Mbps |
-| 高清 | 720x1600 | 10 Mbps |
+| 档位 | 目标短边 | bitrate | Pixel 1080x2400 | 云手机 720x1280 | 云手机 1256x2584 |
+|---|---|---|---|---|---|
+| 流畅 | 360 | 2 Mbps | 360x800 | 360x640 | 360x740 |
+| 标准 | 540 | 6 Mbps | 540x1200 | 540x960 | 540x1110 |
+| 高清 | 720 | 10 Mbps | 720x1600 | 720x1280 | 720x1482 |
+
+输出尺寸按设备**实际显示分辨率**等比计算（`wm size` 优先取 Override size），不会把 9:20 的比例硬套到别的手机。
 ```
 
 `adb` 查找顺序：`adbPath` → `PATH` → `$ANDROID_HOME/platform-tools/adb` → `$ANDROID_SDK_ROOT/platform-tools/adb` → `~/Library/Android/sdk/platform-tools/adb` → `/opt/homebrew/bin/adb`。
