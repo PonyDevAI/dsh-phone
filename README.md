@@ -1,6 +1,7 @@
 # dsh-phone
 
 [![CI](https://github.com/PonyDevAI/dsh-phone/actions/workflows/ci.yml/badge.svg)](https://github.com/PonyDevAI/dsh-phone/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/dsh-phone.svg)](https://www.npmjs.com/package/dsh-phone)
 
 DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是点手机。
 
