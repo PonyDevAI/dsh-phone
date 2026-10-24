@@ -1,5 +1,9 @@
 // dsh-phone · 冒烟测试（不触网；有 adb 时额外做一次真实设备列表检查）
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { Adb, ADDRESS_RE, KEYS, SERIAL_RE, classifyDevice, parseDevices } from '../lib/adb.js'
+import { createTargetStore } from '../lib/targets.js'
 
 let failures = 0
 function ok(name, condition) {
@@ -31,7 +35,7 @@ eq('device count', devices.length, 7)
 eq('usb serial', devices[0].serial, '34201JEHN07681')
 eq('usb kind', devices[0].kind, 'usb')
 eq('usb model', devices[0].model, 'Pixel 7a')
-eq('wifi kind', devices[1].kind, 'wifi')
+eq('tailscale ip kind', devices[1].kind, 'cloud') // 100.107.25.26 是 Tailscale CGNAT
 eq('cloud kind', devices[3].kind, 'cloud')
 eq('emulator kind', devices[4].kind, 'emulator')
 eq('unauthorized state', devices[5].state, 'unauthorized')
@@ -43,6 +47,9 @@ ok('serial regex rejects shell', !SERIAL_RE.test('x; rm -rf /'))
 ok('address regex accepts ipv4', ADDRESS_RE.test('192.168.1.5:5555'))
 ok('address regex rejects text', !ADDRESS_RE.test('hello world'))
 eq('classify unknown defaults usb', classifyDevice('34201JEHN07681', {}), 'usb')
+eq('classify tailscale cgnat as cloud', classifyDevice('100.90.248.53:5555', {}), 'cloud')
+eq('classify tailscale dns as cloud', classifyDevice('unicom-openclaw-test:5555', {}), 'cloud')
+eq('classify plain ip as wifi', classifyDevice('192.168.1.7:5555', {}), 'wifi')
 eq('key map has back', KEYS.back, '4')
 
 // ---------------------------------------------------------------- live adb (optional)
@@ -63,6 +70,24 @@ if (resolved) {
   }
   console.log('LIVE  adb ' + resolved.version + ' · ' + live.devices.length + ' device(s)')
   if (process.env.SMOKE_TIMEOUT) ok('live timeout error path', true)
+}
+
+// ---------------------------------------------------------------- 连接目标存储
+const dir = mkdtempSync(join(tmpdir(), 'dsh-phone-'))
+try {
+  const store = createTargetStore(join(dir, 'targets.json'))
+  eq('targets empty', await store.list(), [])
+  await store.record('100.90.248.53:5555')
+  await store.record('unicom-openclaw-test:5555')
+  await store.record('100.90.248.53:5555')
+  const list = await store.list()
+  eq('targets dedupe + latest first', list.map((item) => item.address), ['100.90.248.53:5555', 'unicom-openclaw-test:5555'])
+  ok('targets timestamp', typeof list[0].lastSeenAt === 'number')
+  await store.remove('100.90.248.53:5555')
+  eq('targets remove', (await store.list()).map((item) => item.address), ['unicom-openclaw-test:5555'])
+  eq('targets rejects bad address', await store.record('x; rm -rf /'), null)
+} finally {
+  rmSync(dir, { recursive: true, force: true })
 }
 
 // guard rails: 非法 serial 必须在跑 adb 之前就被拒绝

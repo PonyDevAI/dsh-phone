@@ -69,7 +69,10 @@ window.fetch = async function (url, init) {
   if (target.endsWith('health')) return json({ ok: true, value: { adb: { bin: 'adb', version: '1.0.41' }, devices: DEVICES.length } })
   if (target.endsWith('devices')) return json({ ok: true, value: { devices: DEVICES, at: Date.now() } })
   if (target.endsWith('shot')) return new Response(bytes(), { status: 200, headers: { 'content-type': 'image/png' } })
-  if (target.endsWith('input') || target.endsWith('connect') || target.endsWith('disconnect')) return json({ ok: true, value: {} })
+  if (target.endsWith('disconnect')) return json({ ok: true, value: {} })
+  if (target.endsWith('targets')) return json({ ok: true, value: { targets: [{ address: 'unicom-openclaw-new:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }] } })
+  if (target.endsWith('targets/remove')) return json({ ok: true, value: { removed: true } })
+  if (target.endsWith('input') || target.endsWith('connect')) return json({ ok: true, value: {} })
   return json({ ok: false, error: { message: 'unstubbed ' + target } })
 }
 
@@ -126,8 +129,26 @@ setTimeout(function () {
   if (row) row.click()
 }, 350)
 setTimeout(function () {
-  if (location.hash !== '#float') document.title = 'ready slots=' + Object.keys(captured).join(',')
+  if (location.hash !== '#float' && location.hash !== '#diag') document.title = 'ready slots=' + Object.keys(captured).join(',')
 }, 2500)
+
+// #diag：模拟「⋯ → adb 诊断」，验证诊断面板能打开
+if (location.hash === '#diag') {
+  setTimeout(function () {
+    const buttons = document.querySelectorAll('#rootB .dph-bar .dph-ibtn')
+    const more = buttons[buttons.length - 1]
+    if (more) more.click()
+    setTimeout(function () {
+      const items = [...document.querySelectorAll('#rootB .dph-menu .dph-row')]
+      const target = items.find(function (node) { return (node.textContent || '').indexOf('诊断') >= 0 })
+      if (target) target.click()
+      setTimeout(function () {
+        const pre = document.querySelector('#rootB .dph-diag-pre')
+        document.title = 'diag ' + (pre ? pre.textContent.split(String.fromCharCode(10)).join(' | ') : 'missing')
+      }, 400)
+    }, 250)
+  }, 1200)
+}
 
 // #float：模拟「⋯ → 浮窗打开」，验证 rect 计算与注入链路
 if (location.hash === '#float') {

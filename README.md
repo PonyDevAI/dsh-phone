@@ -16,8 +16,10 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 - **设备列表**：USB / Wi-Fi / 模拟器 / 云手机分组，状态点区分 `device` / `unauthorized` / `offline`。
 - **预览**：设备画面按右侧栏高度等比缩放，带机身 bezel；顶栏只有「设备下拉 + 返回/主页/多任务/截图/更多」。
 - **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按截图实际像素换算）。
-- **连接**：`adb connect <ip>:<port>`（无线调试、Tailscale 云手机）。
-- **更多**：电源、旋转、重新连接、浮窗打开、复制 serial、断开。
+- **连接**：`adb connect <ip>:<port>`（无线调试、Tailscale 云手机）；连接过的目标自动记到 `$DSH_HOME/phone/targets.json`，未连接时也显示在列表里，点一下就直接连。
+- **诊断**：`⋯ → adb 诊断` 看 adb 路径/版本、每台设备状态，一键复制。
+- **更多**：电源、旋转、重新连接、adb 诊断、浮窗打开、复制 serial、断开。
+- Tailscale 的 `100.64.0.0/10` 地址会归到「云手机」分组，不再混进 Wi-Fi。
 - 没有分辨率/网速元数据栏，没有文字输入框。
 
 ## 安装
@@ -59,6 +61,8 @@ Host 半区挂 `/phone` 前缀（`webServer.register` + `connection.admit` 认�
 | `POST /phone/disconnect` | `{ serial }` |
 | `POST /phone/shot` | `{ serial }` → `image/png` 原始字节 |
 | `POST /phone/input` | `{ serial, event }`，event 支持 `tap` / `swipe` / `key` / `rotate` |
+| `POST /phone/targets` | 已保存的连接目标（最近 12 条，含 pinned/lastSeenAt） |
+| `POST /phone/targets/remove` | `{ address }` |
 
 成功 `{ ok: true, value }`，失败 `{ ok: false, error: { code, message } }`。
 
@@ -83,6 +87,7 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 - 画面是 **轮询截图**（约 1–2 fps），不是视频流；高帧率版（`screenrecord` H.264 + WebCodecs）在计划里。
 - 单个右侧栏 tab，设备在 tab 内切换；不支持同一 pane 多设备并排（后续可开 `multiple`）。
 - 没有文字输入（`adb shell input text` 只支持 ASCII，中文要 ADBKeyboard）。
+- 「已保存」目标是地址级记录，没有备注名；显示名直接是 `ip:port` / 主机名。
 - 只支持 Android/adb；hdc（鸿蒙）和 iOS 走 `PhoneTransport` 接口后加。
 - 右侧栏是 per-session 的，没有会话的页面不显示手机图标。
 - 需要设备上已授权 USB 调试；`unauthorized` 会提示去手机上点允许。
