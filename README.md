@@ -13,7 +13,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 ## 功能
 
 - **会话头部手机图标**：点一下展开右侧栏，角标显示在线设备数。
-- **设备列表**：平铺一列，不按手机类型分组；每台只标连接方式（USB / Wi-Fi / Tailscale / emulator），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
+- **设备列表**：平铺一列，不按手机类型分组；图标按设备系统显示（Android / HarmonyOS / iOS），文字标签标连接方式（USB / Wi-Fi / Tailscale / emulator），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
 - **预览**：H.264 流（`screenrecord` → WebCodecs → canvas），约 20–30fps；不支持 WebCodecs 时自动回退截图轮询。设备画面按右侧栏高度等比缩放，带机身 bezel。
 - **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按 `wm size` 的设备像素换算，和流分辨率无关）。
 - **操作栏**：底部是「返回 / 主页 / 多任务 | 截图」，顶部只有设备下拉、旋转、更多。
@@ -21,6 +21,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 - **诊断**：`⋯ → adb 诊断` 看 adb 路径/版本、每台设备状态，一键复制。
 - **更多**：电源、旋转、重新连接、adb 诊断、浮窗打开、复制 serial、断开。
 - 连接方式由 serial 判断：`usb:` 属性 → USB；`unicom-openclaw-*` 或 `100.64.0.0/10` → Tailscale；其余带端口 → Wi-Fi。
+- 系统平台由 `getprop` 判断（`ro.build.version.harmony*` / `hw_sc.build.platform.version` → HarmonyOS，其余 Android）；iOS 图标等接入 WDA transport 后生效。
 - 没有分辨率/网速元数据栏，没有文字输入框。
 
 ## 安装

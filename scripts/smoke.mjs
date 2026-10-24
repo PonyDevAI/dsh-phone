@@ -2,7 +2,7 @@
 import { mkdtempSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { Adb, ADDRESS_RE, KEYS, SERIAL_RE, classifyDevice, parseDevices } from '../lib/adb.js'
+import { Adb, ADDRESS_RE, KEYS, SERIAL_RE, classifyDevice, parseDevices, parseGetprop, platformFromProps } from '../lib/adb.js'
 import { createTargetStore } from '../lib/targets.js'
 
 let failures = 0
@@ -50,6 +50,11 @@ eq('classify unknown defaults usb', classifyDevice('34201JEHN07681', {}), 'usb')
 eq('classify cgnat as tailscale', classifyDevice('100.90.248.53:5555', {}), 'tailscale')
 eq('classify dns as tailscale', classifyDevice('unicom-openclaw-test:5555', {}), 'tailscale')
 eq('classify plain ip as wifi', classifyDevice('192.168.1.7:5555', {}), 'wifi')
+eq('getprop parse', parseGetprop('[ro.product.brand]: [google]\n[ro.build.version.release]: [15]\n')['ro.product.brand'], 'google')
+eq('platform android', platformFromProps({ 'ro.product.brand': 'google', 'ro.build.version.release': '15' }), 'android')
+eq('platform harmony by version', platformFromProps({ 'ro.build.version.harmony': '4.0.0' }), 'harmony')
+eq('platform harmony by hw_sc', platformFromProps({ 'hw_sc.build.platform.version': '6.0.0' }), 'harmony')
+eq('platform harmony by brand', platformFromProps({ 'ro.product.brand': 'Harmony' }), 'harmony')
 eq('key map has back', KEYS.back, '4')
 
 // ---------------------------------------------------------------- live adb (optional)

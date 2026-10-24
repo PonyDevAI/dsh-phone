@@ -15,11 +15,11 @@ const streamPath = process.argv[3] || '/tmp/p1-video.h264'
 const streamBase64 = existsSync(streamPath) ? readFileSync(streamPath).toString('base64') : ''
 
 const DEVICES = [
-  { serial: '34201JEHN07681', state: 'device', kind: 'usb', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
-  { serial: '100.107.25.26:5555', state: 'device', kind: 'tailscale', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
-  { serial: '100.90.248.53:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
-  { serial: 'unicom-openclaw-pony:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
-  { serial: 'unicom-openclaw-test:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
+  { serial: '34201JEHN07681', state: 'device', kind: 'usb', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
+  { serial: '100.107.25.26:5555', state: 'device', kind: 'tailscale', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
+  { serial: '100.90.248.53:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
+  { serial: 'unicom-openclaw-pony:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
+  { serial: 'unicom-openclaw-test:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
 ]
 
 const html = `<!doctype html>

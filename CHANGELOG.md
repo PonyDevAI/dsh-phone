@@ -17,4 +17,5 @@
 - H.264 实时预览：Host `POST /phone/stream` 直接 pipe `screenrecord --output-format=h264`；客户端 Annex-B → avcC → WebCodecs VideoDecoder → canvas，约 20–30fps
 - 不支持 WebCodecs 的浏览器自动回退截图轮询；`screen-info` 提供设备真实分辨率做坐标换算
 - 操作栏改为底部三键 + 截图，顶部只留设备下拉/旋转/更多；断开连接收进设备菜单并二次确认
-- 测试：`npm run smoke`（含 targets 存储）、`scripts/render-test.mjs`（列表/预览/浮窗/诊断/流五种状态）
+- 设备图标按系统显示：Android 机器人 / HarmonyOS / iOS（iOS 待 transport）
+- 测试：`npm run smoke`（含 targets 存储、getprop 解析、平台判定）、`scripts/render-test.mjs`（列表/预览/浮窗/诊断/流五种状态）
