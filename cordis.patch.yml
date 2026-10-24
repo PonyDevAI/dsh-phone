@@ -1,6 +1,6 @@
 - insert:
     - id: phone
-      name: dsh-phone
+      name: "@ponydev/dsh-phone"
       config:
         adbPath: adb
         pollMs: 700

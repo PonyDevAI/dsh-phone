@@ -1,7 +1,7 @@
 # dsh-phone
 
-[![npm](https://img.shields.io/npm/v/dsh-phone)](https://www.npmjs.com/package/dsh-phone)
-[![license](https://img.shields.io/npm/l/dsh-phone)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@ponydev/dsh-phone)](https://www.npmjs.com/package/@ponydev/dsh-phone)
+[![license](https://img.shields.io/npm/l/@ponydev/dsh-phone)](LICENSE)
 
 DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是点手机。
 
@@ -32,7 +32,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 dsh plugin --profile web add link:/Users/pony/deepseek/plugins/dsh-phone
 
 # 从 npm（发布后）
-dsh plugin --profile web add dsh-phone
+dsh plugin --profile web add @ponydev/dsh-phone
 ```
 
 装完重启 `dsh web`。右侧栏 tab 类型和头部图标在重启后的页面里出现。
@@ -44,7 +44,7 @@ dsh plugin --profile web add dsh-phone
 ```yaml
 - insert:
     - id: phone
-      name: dsh-phone
+      name: "@ponydev/dsh-phone"
       config:
         adbPath: adb   # 或 /Users/pony/Library/Android/sdk/platform-tools/adb
         pollMs: 700

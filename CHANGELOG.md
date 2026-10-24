@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.2.0 — 2026-10-24
+
+### 变更
+- 包名迁移：`dsh-phone` → **`@ponydev/dsh-phone`**，与 `dsh-model-usage` / `dsh-tailscale` 统一 scope
+- `cordis.patch.yml` 的 bundle 行改为 `@ponydev/dsh-phone`；本地 web profile 同步迁移（link 安装）
+- 新包已配置 npm Trusted Publisher（OIDC），后续 tag 发版免 2FA
+
+### 移除
+- 裸包 `dsh-phone` 标记 deprecate，指向 `@ponydev/dsh-phone`
+- npm 上的 `dsh-phone@0.0.0-stage` 占位版本已删除
+
 ## 0.1.1 — 2026-10-24
 
 ### 变更

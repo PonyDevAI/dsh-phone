@@ -30,15 +30,18 @@ CI（`.github/workflows/ci.yml`）在 push `main` / PR 时只跑检查（语法 
 
 | 项 | 值 |
 |---|---|
+| Package | `@ponydev/dsh-phone` |
 | Organization or user | `PonyDevAI` |
-| Repository | `dsh-phone` |
+| Repository | `PonyDevAI/dsh-phone` |
 | Workflow filename | `release.yml` |
 | 权限 | `publish`、`stage publish` |
-| trust id | `9f7b6ffa-aa7a-4126-b527-27cfb56ad670` |
+| trust id | `26656b74-ebf5-4a49-b7b1-d4825b5520da` |
 
 - **不需要** `NPM_TOKEN` secret、不需要 OTP、不会过期；
 - 发布包自动获得 `dist.attestations.provenance`（SLSA v1）；
-- 首次发布 `0.1.0` 是本地网页授权 + OTP 完成的；从 `0.1.1` 起全部走 tag → Actions。
+- `0.1.0` / `0.1.1` 是裸包 `dsh-phone` 的本地网页授权 + OTP 发布；
+- `0.2.0` 起迁移到 `@ponydev/dsh-phone`，新包已单独配置 Trusted Publisher（id 见上表）；
+- 裸包 `dsh-phone` 已 deprecate，指向新包；`0.0.0-stage` 占位版本已删除。
 
 ## 标准发版步骤
 
