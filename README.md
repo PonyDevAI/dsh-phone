@@ -13,7 +13,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 ## 功能
 
 - **会话头部手机图标**：点一下展开右侧栏，角标显示在线设备数。
-- **设备列表**：平铺一列，不按手机类型分组；图标按设备系统显示（Android / HarmonyOS / iOS），文字标签标连接方式（USB / Wi-Fi / Tailscale / emulator），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
+- **设备列表**：平铺一列，不按手机类型分组；图标按设备系统显示（Android / HarmonyOS / iOS），旁边两个小标签分别标连接方式（USB / Wi-Fi / Tailscale / emulator）和系统（Android / HarmonyOS / iOS），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
 - **预览**：H.264 流（`screenrecord` → WebCodecs → canvas），约 20–30fps；不支持 WebCodecs 时自动回退截图轮询。设备画面按右侧栏高度等比缩放，带机身 bezel。
 - **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按 `wm size` 的设备像素换算，和流分辨率无关）。
 - **操作栏**：底部是「返回 / 主页 / 多任务 | 截图」，顶部只有设备下拉、旋转、更多。
