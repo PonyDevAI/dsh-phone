@@ -11,6 +11,7 @@
 - Host：`/phone/*` 路由 + `connection.admit` 认证围栏；serial 白名单；execFile 无 shell
 - 常用连接目标：连接成功自动记录（`$DSH_HOME/phone/targets.json`，最近 12 条），未连接目标也显示在列表，点击直接 `adb connect`
 - `⋯ → adb 诊断`：adb 路径/版本、每台设备状态，可复制
-- 分类修正：`100.64.0.0/10`（Tailscale CGNAT）归到云手机分组
+- 列表改为平铺，不再按「云手机」分组；只保留连接方式标签（USB / Wi-Fi / Tailscale / emulator）
+- Tailscale 判定：`unicom-openclaw-*`、`*.ts.net`、`100.64.0.0/10`
 - 真机验证：Pixel 7a 上 tap / swipe / 返回 / 主页 均已实测（点开「网络和互联网」「关于本机」，列表滚动）
 - 测试：`npm run smoke`（含 targets 存储）、`scripts/render-test.mjs`（列表/预览/浮窗/诊断四种状态）

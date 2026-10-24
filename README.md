@@ -13,13 +13,13 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 ## 功能
 
 - **会话头部手机图标**：点一下展开右侧栏，角标显示在线设备数。
-- **设备列表**：USB / Wi-Fi / 模拟器 / 云手机分组，状态点区分 `device` / `unauthorized` / `offline`。
+- **设备列表**：平铺一列，不按手机类型分组；每台只标连接方式（USB / Wi-Fi / Tailscale / emulator），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
 - **预览**：设备画面按右侧栏高度等比缩放，带机身 bezel；顶栏只有「设备下拉 + 返回/主页/多任务/截图/更多」。
 - **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按截图实际像素换算）。
 - **连接**：`adb connect <ip>:<port>`（无线调试、Tailscale 云手机）；连接过的目标自动记到 `$DSH_HOME/phone/targets.json`，未连接时也显示在列表里，点一下就直接连。
 - **诊断**：`⋯ → adb 诊断` 看 adb 路径/版本、每台设备状态，一键复制。
 - **更多**：电源、旋转、重新连接、adb 诊断、浮窗打开、复制 serial、断开。
-- Tailscale 的 `100.64.0.0/10` 地址会归到「云手机」分组，不再混进 Wi-Fi。
+- 连接方式由 serial 判断：`usb:` 属性 → USB；`unicom-openclaw-*` 或 `100.64.0.0/10` → Tailscale；其余带端口 → Wi-Fi。
 - 没有分辨率/网速元数据栏，没有文字输入框。
 
 ## 安装

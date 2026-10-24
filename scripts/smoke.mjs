@@ -35,8 +35,8 @@ eq('device count', devices.length, 7)
 eq('usb serial', devices[0].serial, '34201JEHN07681')
 eq('usb kind', devices[0].kind, 'usb')
 eq('usb model', devices[0].model, 'Pixel 7a')
-eq('tailscale ip kind', devices[1].kind, 'cloud') // 100.107.25.26 是 Tailscale CGNAT
-eq('cloud kind', devices[3].kind, 'cloud')
+eq('tailscale ip kind', devices[1].kind, 'tailscale') // 100.107.25.26 是 Tailscale CGNAT
+eq('tailscale dns kind', devices[3].kind, 'tailscale')
 eq('emulator kind', devices[4].kind, 'emulator')
 eq('unauthorized state', devices[5].state, 'unauthorized')
 eq('offline state', devices[6].state, 'offline')
@@ -47,8 +47,8 @@ ok('serial regex rejects shell', !SERIAL_RE.test('x; rm -rf /'))
 ok('address regex accepts ipv4', ADDRESS_RE.test('192.168.1.5:5555'))
 ok('address regex rejects text', !ADDRESS_RE.test('hello world'))
 eq('classify unknown defaults usb', classifyDevice('34201JEHN07681', {}), 'usb')
-eq('classify tailscale cgnat as cloud', classifyDevice('100.90.248.53:5555', {}), 'cloud')
-eq('classify tailscale dns as cloud', classifyDevice('unicom-openclaw-test:5555', {}), 'cloud')
+eq('classify cgnat as tailscale', classifyDevice('100.90.248.53:5555', {}), 'tailscale')
+eq('classify dns as tailscale', classifyDevice('unicom-openclaw-test:5555', {}), 'tailscale')
 eq('classify plain ip as wifi', classifyDevice('192.168.1.7:5555', {}), 'wifi')
 eq('key map has back', KEYS.back, '4')
 
@@ -66,7 +66,7 @@ if (resolved) {
   ok('live adb version', typeof resolved.version === 'string' && resolved.version.length > 0)
   for (const device of live.devices) {
     ok('live serial parseable: ' + device.serial, SERIAL_RE.test(device.serial))
-    ok('live kind known: ' + device.serial, ['usb', 'wifi', 'cloud', 'emulator'].includes(device.kind))
+    ok('live kind known: ' + device.serial, ['usb', 'wifi', 'tailscale', 'emulator'].includes(device.kind))
   }
   console.log('LIVE  adb ' + resolved.version + ' · ' + live.devices.length + ' device(s)')
   if (process.env.SMOKE_TIMEOUT) ok('live timeout error path', true)

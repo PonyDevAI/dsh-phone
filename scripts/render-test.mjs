@@ -14,10 +14,10 @@ const shotBase64 = existsSync(shotPath) ? readFileSync(shotPath).toString('base6
 
 const DEVICES = [
   { serial: '34201JEHN07681', state: 'device', kind: 'usb', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
-  { serial: '100.107.25.26:5555', state: 'device', kind: 'wifi', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
-  { serial: '100.90.248.53:5555', state: 'device', kind: 'wifi', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
-  { serial: 'unicom-openclaw-pony:5555', state: 'device', kind: 'cloud', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
-  { serial: 'unicom-openclaw-test:5555', state: 'device', kind: 'cloud', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
+  { serial: '100.107.25.26:5555', state: 'device', kind: 'tailscale', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
+  { serial: '100.90.248.53:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
+  { serial: 'unicom-openclaw-pony:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
+  { serial: 'unicom-openclaw-test:5555', state: 'device', kind: 'tailscale', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
 ]
 
 const html = `<!doctype html>
