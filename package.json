@@ -1,0 +1,62 @@
+{
+  "name": "dsh-phone",
+  "version": "0.1.0",
+  "description": "DSH Web 插件：右侧栏预览并点按控制已连接的 Android 设备（adb）",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "android",
+    "adb",
+    "phone",
+    "mirror",
+    "scrcpy"
+  ],
+  "license": "MIT",
+  "author": "Pony <205503242+jmaubay7@users.noreply.github.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PonyDevAI/dsh-phone.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PonyDevAI/dsh-phone/issues"
+  },
+  "homepage": "https://github.com/PonyDevAI/dsh-phone#readme",
+  "type": "module",
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js"
+  },
+  "engines": {
+    "dsh": ">=0.2.0-rc.2 <0.3.0",
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "check": "node --check lib/adb.js && node --check lib/transport.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "test:ui": "node scripts/render-test.mjs",
+    "release:notes": "node scripts/release-notes.mjs"
+  },
+  "dsh": {
+    "manifestVersion": 1,
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-sidebar-right",
+        "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-locale"
+      ]
+    }
+  }
+}

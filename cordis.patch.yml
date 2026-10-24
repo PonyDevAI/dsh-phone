@@ -1,0 +1,6 @@
+- insert:
+    - id: phone
+      name: dsh-phone
+      config:
+        adbPath: adb
+        pollMs: 700
