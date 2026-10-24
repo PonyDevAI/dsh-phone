@@ -16,6 +16,7 @@
 - 真机验证：Pixel 7a 上 tap / swipe / 返回 / 主页 均已实测（点开「网络和互联网」「关于本机」，列表滚动）
 - H.264 实时预览：Host `POST /phone/stream` 直接 pipe `screenrecord --output-format=h264`；客户端 Annex-B → avcC → WebCodecs VideoDecoder → canvas，约 20–30fps
 - 不支持 WebCodecs 的浏览器自动回退截图轮询；`screen-info` 提供设备真实分辨率做坐标换算
-- 操作栏改为底部三键 + 截图，顶部只留设备下拉/旋转/更多；断开连接收进设备菜单并二次确认
+- 操作栏改为底部悬浮胶囊（HarmonyOS 风格三键 + 截图），不占画面高度；顶部设备下拉/清晰度/旋转/更多；断开连接收进设备菜单并二次确认
+- 顶部新增清晰度切换：流畅 360x800/2M、标准 540x1200/6M、高清 720x1600/10M，只影响流输出，不改设备分辨率
 - 设备图标按系统显示：Android 机器人 / HarmonyOS / iOS（iOS 待 transport），22px 实心标记、无底色；行内同时显示连接方式与系统两个小标签
 - 测试：`npm run smoke`（含 targets 存储、getprop 解析、平台判定）、`scripts/render-test.mjs`（列表/预览/浮窗/诊断/流五种状态）

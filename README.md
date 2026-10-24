@@ -48,8 +48,17 @@ dsh plugin --profile web add dsh-phone
         adbPath: adb   # 或 /Users/pony/Library/Android/sdk/platform-tools/adb
         pollMs: 700
         streamTimeLimit: 180   # screenrecord 单次上限，到点自动续
-        streamBitRate: 6000000
-        streamSize: 540x1200   # 云手机可降到 360x800 / 2M
+        streamBitRate: 6000000 # 客户端清晰度会覆盖这两项
+        streamSize: 540x1200
+```
+
+客户端清晰度预设（顶部切换，localStorage 记住）：
+
+| 档位 | size | bitrate |
+|---|---|---|
+| 流畅 | 360x800 | 2 Mbps |
+| 标准 | 540x1200 | 6 Mbps |
+| 高清 | 720x1600 | 10 Mbps |
 ```
 
 `adb` 查找顺序：`adbPath` → `PATH` → `$ANDROID_HOME/platform-tools/adb` → `$ANDROID_SDK_ROOT/platform-tools/adb` → `~/Library/Android/sdk/platform-tools/adb` → `/opt/homebrew/bin/adb`。
