@@ -86,7 +86,7 @@ window.fetch = async function (url, init) {
           controller.enqueue(data.slice(offset, offset + chunkSize))
           await new Promise((resolve) => setTimeout(resolve, 20))
         }
-        controller.close()
+        // 保持流不关闭，模拟真实 screenrecord 持续输出
       },
     })
     return new Response(stream, { status: 200, headers: { 'content-type': 'video/h264' } })
