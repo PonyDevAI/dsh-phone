@@ -27,6 +27,12 @@ launchctl kickstart -k gui/$(id -u)/local.deepseek-harness.web
 adb -s <serial> exec-out screencap -p > /tmp/dsh-phone-shot.png
 npm run test:ui          # 输出 /tmp/dsh-phone-render.png
 open /tmp/dsh-phone-render.html
+
+# 流链路（H.264 → WebCodecs → canvas）：先录一段真实 H.264，再看 #stream 状态
+adb -s <serial> exec-out screenrecord --output-format=h264 --time-limit=5 --size=540x1200 - > /tmp/p1-video.h264
+node scripts/render-test.mjs /tmp/dsh-phone-shot.png /tmp/p1-video.h264
+open '/tmp/dsh-phone-render.html#stream'   # canvas 有画面
+node scripts/render-test.mjs --help >/dev/null 2>&1 || true
 ```
 
 ## 提交前检查

@@ -4,3 +4,6 @@
       config:
         adbPath: adb
         pollMs: 700
+        streamTimeLimit: 180
+        streamBitRate: 6000000
+        streamSize: 540x1200

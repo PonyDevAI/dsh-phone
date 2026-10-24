@@ -39,7 +39,7 @@
     "node": ">=22.5"
   },
   "scripts": {
-    "check": "node --check lib/adb.js && node --check lib/targets.js && node --check lib/transport.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs",
+    "check": "node --check lib/adb.js && node --check lib/targets.js && node --check lib/stream.js && node --check lib/transport.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs",
     "smoke": "node scripts/smoke.mjs",
     "test:ui": "node scripts/render-test.mjs",
     "release:notes": "node scripts/release-notes.mjs"

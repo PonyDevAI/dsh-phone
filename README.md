@@ -14,8 +14,9 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 
 - **会话头部手机图标**：点一下展开右侧栏，角标显示在线设备数。
 - **设备列表**：平铺一列，不按手机类型分组；每台只标连接方式（USB / Wi-Fi / Tailscale / emulator），状态点区分 `device` / `unauthorized` / `offline` / `已保存`。
-- **预览**：设备画面按右侧栏高度等比缩放，带机身 bezel；顶栏只有「设备下拉 + 返回/主页/多任务/截图/更多」。
-- **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按截图实际像素换算）。
+- **预览**：H.264 流（`screenrecord` → WebCodecs → canvas），约 20–30fps；不支持 WebCodecs 时自动回退截图轮询。设备画面按右侧栏高度等比缩放，带机身 bezel。
+- **点按**：点击 = `tap`，拖拽 = `swipe`（坐标按 `wm size` 的设备像素换算，和流分辨率无关）。
+- **操作栏**：底部是「返回 / 主页 / 多任务 | 截图」，顶部只有设备下拉、旋转、更多。
 - **连接**：`adb connect <ip>:<port>`（无线调试、Tailscale 云手机）；连接过的目标自动记到 `$DSH_HOME/phone/targets.json`，未连接时也显示在列表里，点一下就直接连。
 - **诊断**：`⋯ → adb 诊断` 看 adb 路径/版本、每台设备状态，一键复制。
 - **更多**：电源、旋转、重新连接、adb 诊断、浮窗打开、复制 serial、断开。
@@ -45,6 +46,9 @@ dsh plugin --profile web add dsh-phone
       config:
         adbPath: adb   # 或 /Users/pony/Library/Android/sdk/platform-tools/adb
         pollMs: 700
+        streamTimeLimit: 180   # screenrecord 单次上限，到点自动续
+        streamBitRate: 6000000
+        streamSize: 540x1200   # 云手机可降到 360x800 / 2M
 ```
 
 `adb` 查找顺序：`adbPath` → `PATH` → `$ANDROID_HOME/platform-tools/adb` → `$ANDROID_SDK_ROOT/platform-tools/adb` → `~/Library/Android/sdk/platform-tools/adb` → `/opt/homebrew/bin/adb`。
@@ -61,6 +65,8 @@ Host 半区挂 `/phone` 前缀（`webServer.register` + `connection.admit` 认�
 | `POST /phone/disconnect` | `{ serial }` |
 | `POST /phone/shot` | `{ serial }` → `image/png` 原始字节 |
 | `POST /phone/input` | `{ serial, event }`，event 支持 `tap` / `swipe` / `key` / `rotate` |
+| `POST /phone/stream` | `{ serial }` → `video/h264` chunked Annex-B 流 |
+| `POST /phone/screen-info` | `{ serial }` → `{ width, height }`（`wm size`） |
 | `POST /phone/targets` | 已保存的连接目标（最近 12 条，含 pinned/lastSeenAt） |
 | `POST /phone/targets/remove` | `{ address }` |
 
@@ -82,9 +88,23 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 1. 手动把右侧栏拖窄一次（DSH 会记住）；
 2. 打开手机后点 `⋯ → 浮窗打开`，插件会按画面宽度算一个 `324–361px` 的浮窗并放到右侧。
 
+## 操作布局
+
+```
+[ Pixel 7a ▾ ]                     [旋转] [⋯]
+────────────────────────────────────────────
+              （设备画面）
+────────────────────────────────────────────
+      [←] [○] [□]   │   [📷]
+```
+- 底部：返回 / 主页 / 多任务，右侧分隔后是截图。
+- 顶部：设备下拉、旋转、更多（电源、重连、诊断、浮窗、复制 serial、设备列表）。
+- 「断开连接」放在设备下拉菜单里，需要点两次确认（防止误触）。
+
 ## 已知限制
 
-- 画面是 **轮询截图**（约 1–2 fps），不是视频流；高帧率版（`screenrecord` H.264 + WebCodecs）在计划里。
+- 画面默认走 H.264 流（约 20–30fps）；没有 WebCodecs 的浏览器会回退到 1–2fps 轮询截图。
+- 流是 `screenrecord`，没有声音；单次 180s 上限由 Host 自动续接（断开 <1s）。
 - 单个右侧栏 tab，设备在 tab 内切换；不支持同一 pane 多设备并排（后续可开 `multiple`）。
 - 没有文字输入（`adb shell input text` 只支持 ASCII，中文要 ADBKeyboard）。
 - 「已保存」目标是地址级记录，没有备注名；显示名直接是 `ip:port` / 主机名。

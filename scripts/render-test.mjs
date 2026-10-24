@@ -11,6 +11,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const CLIENT = readFileSync(join(ROOT, 'lib', 'client.js'), 'utf8')
 const shotPath = process.argv[2] || '/tmp/dsh-phone-shot.png'
 const shotBase64 = existsSync(shotPath) ? readFileSync(shotPath).toString('base64') : ''
+const streamPath = process.argv[3] || '/tmp/p1-video.h264'
+const streamBase64 = existsSync(streamPath) ? readFileSync(streamPath).toString('base64') : ''
 
 const DEVICES = [
   { serial: '34201JEHN07681', state: 'device', kind: 'usb', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
@@ -52,9 +54,11 @@ window.__ModuleLoader__ = { load: (def) => { window.__DEF__ = def } }
 window.onerror = function (message) { document.title = 'ERR ' + message }
 window.addEventListener('unhandledrejection', function (event) { document.title = 'REJ ' + (event.reason && event.reason.message || event.reason) })
 </script>
+<script>if (location.search.indexOf('nostream') >= 0) { window.VideoDecoder = undefined }</script>
 <script id="client-src">${CLIENT.replace(/<\/script>/g, '<\\/script>')}</script>
 <script>
 const SHOT = ${JSON.stringify(shotBase64)}
+const STREAM = ${JSON.stringify(streamBase64)}
 const DEVICES = ${JSON.stringify(DEVICES)}
 function bytes() {
   if (!SHOT) return new Uint8Array([137, 80, 78, 71])
@@ -68,6 +72,24 @@ window.fetch = async function (url, init) {
   const json = (payload) => new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' } })
   if (target.endsWith('health')) return json({ ok: true, value: { adb: { bin: 'adb', version: '1.0.41' }, devices: DEVICES.length } })
   if (target.endsWith('devices')) return json({ ok: true, value: { devices: DEVICES, at: Date.now() } })
+  if (target.endsWith('screen-info')) return json({ ok: true, value: { width: 1080, height: 2400 } })
+  if (target.endsWith('stream')) {
+    if (!STREAM) return json({ ok: false, error: { message: 'no stream fixture' } })
+    const bin = atob(STREAM)
+    const data = new Uint8Array(bin.length)
+    for (let i = 0; i < bin.length; i += 1) data[i] = bin.charCodeAt(i)
+    const chunkSize = 8192
+    const stream = new ReadableStream({
+      async start(controller) {
+        for (let offset = 0; offset < data.length; offset += chunkSize) {
+          controller.enqueue(data.slice(offset, offset + chunkSize))
+          await new Promise((resolve) => setTimeout(resolve, 20))
+        }
+        controller.close()
+      },
+    })
+    return new Response(stream, { status: 200, headers: { 'content-type': 'video/h264' } })
+  }
   if (target.endsWith('shot')) return new Response(bytes(), { status: 200, headers: { 'content-type': 'image/png' } })
   if (target.endsWith('disconnect')) return json({ ok: true, value: {} })
   if (target.endsWith('targets')) return json({ ok: true, value: { targets: [{ address: 'unicom-openclaw-new:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }] } })
@@ -131,6 +153,34 @@ setTimeout(function () {
 setTimeout(function () {
   if (location.hash !== '#float' && location.hash !== '#diag') document.title = 'ready slots=' + Object.keys(captured).join(',')
 }, 2500)
+
+// #stream：用真实 H.264 fixture 走一遍「fetch 流 → WebCodecs → canvas」
+if (location.hash === '#stream') {
+  setTimeout(function () {
+    const canvas = document.querySelector('#rootB canvas')
+    let filled = false
+    let size = null
+    if (canvas) {
+      size = canvas.width + 'x' + canvas.height
+      try {
+        const ctx = canvas.getContext('2d')
+        const data = ctx.getImageData(0, 0, Math.min(canvas.width, 64), Math.min(canvas.height, 64)).data
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i] + data[i+1] + data[i+2] > 40) { filled = true; break }
+        }
+      } catch (error) {
+        size = 'readback-error ' + error
+      }
+    }
+    const root = document.querySelector('#rootB .dph-root')
+    const stage = document.querySelector('#rootB .dph-stage')
+    const screen = document.querySelector('#rootB .dph-screen')
+    document.title = 'stream canvas=' + size + ' filled=' + filled
+      + ' root=' + (root ? 'y' : 'n') + ' stage=' + (stage ? 'y' : 'n')
+      + ' screenChildren=' + (screen ? screen.children.length : 'n')
+      + ' text=' + (root ? root.innerText.replace(/\s+/g, ' ').slice(0, 60) : '')
+  }, 4500)
+}
 
 // #diag：模拟「⋯ → adb 诊断」，验证诊断面板能打开
 if (location.hash === '#diag') {
