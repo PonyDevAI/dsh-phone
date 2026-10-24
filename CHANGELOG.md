@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1 — 2026-10-24
+
+### 变更
+- 仓库规范与 `dsh-model-usage` / `dsh-tailscale` 对齐：补 `AGENTS.md`、`docs/DESIGN.md`、scripts 命名（`check-i18n` / `release-notes`）、npm `files`、CI/release workflow
+- 发布内容补齐 `docs`、`AGENTS.md`、`CONTRIBUTING.md`、`RELEASE.md`
+- npm Trusted Publisher（OIDC）配置完成，后续 tag 发版免 2FA
+- 文档目录整理：`docs/DESIGN.md`、`docs/mockups/`、`docs/screenshots/01..03`
+
 ## 0.1.0 — 2026-10-24
 
 - 首个可用版本：右侧栏「手机」tab + 会话头部手机图标

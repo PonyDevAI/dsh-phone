@@ -4,9 +4,9 @@
 > 参考 Codex Mobile Dev 的右侧设备面板：**顶上只有一行「设备下拉 + 几个图标」，下面整块留给设备画面**。
 > 本文是布局、命名与技术方案，**尚未开始写代码**。
 
-![设备列表](list.png)
+![设备列表](mockups/list.png)
 
-![设备画面](device.png)
+![设备画面](mockups/device.png)
 
 ---
 

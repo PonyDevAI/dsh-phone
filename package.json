@@ -1,6 +1,6 @@
 {
   "name": "dsh-phone",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DSH Web 插件：右侧栏预览并点按控制已连接的 Android 设备（adb）",
   "keywords": [
     "dsh",
@@ -25,10 +25,14 @@
   "type": "module",
   "files": [
     "lib",
+    "docs",
     "cordis.patch.yml",
     "README.md",
     "CHANGELOG.md",
-    "LICENSE"
+    "LICENSE",
+    "AGENTS.md",
+    "CONTRIBUTING.md",
+    "RELEASE.md"
   ],
   "exports": {
     ".": "./lib/index.js",
@@ -41,8 +45,9 @@
   "scripts": {
     "check": "node --check lib/adb.js && node --check lib/targets.js && node --check lib/stream.js && node --check lib/transport.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs",
     "smoke": "node scripts/smoke.mjs",
-    "test:ui": "node scripts/render-test.mjs",
-    "release:notes": "node scripts/release-notes.mjs"
+    "check-i18n": "node scripts/check-i18n.mjs",
+    "release-notes": "node scripts/release-notes.mjs",
+    "test-ui": "node scripts/render-test.mjs"
   },
   "dsh": {
     "manifestVersion": 1,

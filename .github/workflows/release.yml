@@ -33,6 +33,11 @@ jobs:
           node scripts/smoke.mjs
           node scripts/check-i18n.mjs
 
+      # Trusted Publishing（OIDC）：无需 NPM_TOKEN，凭 GitHub Actions 身份直接发布。
+      # npm 包设置 → Trusted Publisher 已配置：
+      #   Organization or user: PonyDevAI
+      #   Repository: dsh-phone
+      #   Workflow filename: release.yml
       - name: Publish to npm (OIDC trusted publisher)
         run: |
           NAME="$(node -p "require('./package.json').name")"

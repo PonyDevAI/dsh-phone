@@ -1,15 +1,15 @@
 # dsh-phone
 
-[![CI](https://github.com/PonyDevAI/dsh-phone/actions/workflows/ci.yml/badge.svg)](https://github.com/PonyDevAI/dsh-phone/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/dsh-phone.svg)](https://www.npmjs.com/package/dsh-phone)
+[![npm](https://img.shields.io/npm/v/dsh-phone)](https://www.npmjs.com/package/dsh-phone)
+[![license](https://img.shields.io/npm/l/dsh-phone)](LICENSE)
 
 DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是点手机。
 
 | 设备列表 | 预览画面 |
 |---|---|
-| ![设备列表](docs/screenshots/devices.png) | ![预览画面](docs/screenshots/preview.png) |
+| ![设备列表](docs/screenshots/01-devices.png) | ![预览画面](docs/screenshots/02-preview.png) |
 
-![完整界面](docs/screenshots/overview.png)
+![完整界面](docs/screenshots/03-overview.png)
 
 ## 功能
 
@@ -146,7 +146,7 @@ lib/transport.js  PhoneTransport 接口 + AdbTransport（hdc / iOS 后加）
 lib/client.js     ModuleLoader bundle：tab 类型、列表、预览、i18n、样式
 cordis.patch.yml  bundle 补丁
 scripts/          smoke + 离线渲染
-docs/             设计文档与截图
+docs/             DESIGN.md、mockup、截图
 ```
 
 ## License

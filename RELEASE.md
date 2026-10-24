@@ -12,35 +12,51 @@ GitHub Actions: .github/workflows/release.yml   (触发: push tags: v*)
   1. 校验 tag 与 package.json 版本一致（不一致 → 失败）
   2. 语法检查 + 冒烟测试 + i18n 键一致性
   3. npm Trusted Publishing（OIDC）发布，附 provenance
+     - 版本已存在则跳过（幂等，可安全重跑）
   4. GitHub Release 正文 = CHANGELOG 当前版本条目
 ```
 
-CI（`.github/workflows/ci.yml`）只在 push `main` / PR 时跑检查，不发布。
+CI（`.github/workflows/ci.yml`）在 push `main` / PR 时只跑检查（语法 + 冒烟 + i18n + `npm pack` 内容校验），**不会发布**。
 
-## CHANGELOG 约定
+## CHANGELOG 与 Release 正文（强制）
 
-- 每个版本必须有 `## <semver> — <YYYY-MM-DD>` 条目，缺失时 release workflow 直接失败。
-- Release 正文从 CHANGELOG 自动抽取，不手写。
-- 分类：`新增` / `变更` / `修复` / `移除` / `安全`。
+- **每个版本必须在 `CHANGELOG.md` 有对应 `## <版本>` 条目**，缺失时 release workflow 直接失败（`scripts/release-notes.mjs`）；
+- GitHub Release 正文 = 自动从 CHANGELOG 抽取当前版本条目，不手写；
+- 分类固定：`新增` / `变更` / `修复` / `移除` / `安全`（无内容的分类省略）。
 
-## 首次发布前（人工，一次性）
+## 认证方式（OIDC，永不过期）
 
-npm 包需要配置 Trusted Publisher（OIDC），否则 release workflow 的 publish 步骤会失败：
+使用 **npm Trusted Publishing（OIDC）**，已配置（2026-10-24）：
 
-1. 先手动发布一次或让包在 npm 上存在（首次可临时用 token `npm publish --access public`）；
-2. npmjs.com → 包设置 → Trusted Publisher → GitHub Actions：
-   - Organization or user: `PonyDevAI`
-   - Repository: `dsh-phone`
-   - Workflow filename: `release.yml`
-3. 之后删掉临时 token，全部走 OIDC。
+| 项 | 值 |
+|---|---|
+| Organization or user | `PonyDevAI` |
+| Repository | `dsh-phone` |
+| Workflow filename | `release.yml` |
+| 权限 | `publish`、`stage publish` |
+| trust id | `9f7b6ffa-aa7a-4126-b527-27cfb56ad670` |
+
+- **不需要** `NPM_TOKEN` secret、不需要 OTP、不会过期；
+- 发布包自动获得 `dist.attestations.provenance`（SLSA v1）；
+- 首次发布 `0.1.0` 是本地网页授权 + OTP 完成的；从 `0.1.1` 起全部走 tag → Actions。
 
 ## 标准发版步骤
 
 ```bash
-# 1. 更新 CHANGELOG.md（新增版本条目）
-# 2. 更新 package.json version
+# 1. 更新 CHANGELOG.md（新增版本条目）与 package.json version
 npm run check && npm run smoke
-git add -A && git commit -m "chore(release): v0.1.0"
-git tag v0.1.0
+# 2. 提交并打 tag
+git add -A && git commit -m "chore(release): vX.Y.Z"
+git tag vX.Y.Z
 git push --follow-tags
+# 3. 验证
+gh run watch --repo PonyDevAI/dsh-phone
+npm view dsh-phone version
+gh release view vX.Y.Z --repo PonyDevAI/dsh-phone
 ```
+
+## 排障
+
+- publish 步骤报 trusted publisher 错误：核对 repo / workflow 文件名 / environment 与 npm 设置完全一致；
+- 版本已存在但 Release 没建：workflow 中 publish 会自动跳过，检查 CHANGELOG 是否缺当前版本条目；
+- 需要临时救火时可在本地 `npm publish`（需要 2FA/OTP），事后仍以 tag 为唯一发版入口。

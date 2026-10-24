@@ -1,5 +1,5 @@
 node_modules/
-*.tgz
 *.log
 .DS_Store
-docs/screenshots/*.tmp.png
+npm-debug.log*
+*.tgz
