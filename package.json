@@ -1,6 +1,6 @@
 {
   "name": "@ponydev/dsh-phone",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "DSH Web 插件：右侧栏预览并点按控制已连接的 Android 设备（adb）",
   "keywords": [
     "dsh",

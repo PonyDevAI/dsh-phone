@@ -71,7 +71,11 @@ window.fetch = async function (url, init) {
   const target = String(url)
   const json = (payload) => new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' } })
   if (target.endsWith('health')) return json({ ok: true, value: { adb: { bin: 'adb', version: '1.0.41' }, devices: DEVICES.length } })
-  if (target.endsWith('devices')) return json({ ok: true, value: { devices: DEVICES, at: Date.now() } })
+  if (target.endsWith('devices')) {
+    const devices = location.search.indexOf('nodevices') >= 0 ? [] : DEVICES
+    return json({ ok: true, value: { devices, at: Date.now() } })
+  }
+  if (target.endsWith('ping')) return json({ ok: true, value: { ms: 38, at: Date.now() } })
   if (target.endsWith('screen-info')) return json({ ok: true, value: { width: 1080, height: 2400 } })
   if (target.endsWith('stream')) {
     if (location.search.indexOf('streamfail') >= 0) return json({ ok: false, error: { message: '未知接口: stream' } })
@@ -93,7 +97,10 @@ window.fetch = async function (url, init) {
   }
   if (target.endsWith('shot')) return new Response(bytes(), { status: 200, headers: { 'content-type': 'image/png' } })
   if (target.endsWith('disconnect')) return json({ ok: true, value: {} })
-  if (target.endsWith('targets')) return json({ ok: true, value: { targets: [{ address: 'unicom-openclaw-new:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }] } })
+  if (target.endsWith('targets')) {
+    const targets = location.search.indexOf('nodevices') >= 0 ? [] : [{ address: 'unicom-openclaw-new:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }]
+    return json({ ok: true, value: { targets } })
+  }
   if (target.endsWith('targets/remove')) return json({ ok: true, value: { removed: true } })
   if (target.endsWith('input') || target.endsWith('connect')) return json({ ok: true, value: {} })
   return json({ ok: false, error: { message: 'unstubbed ' + target } })
