@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2 — 2026-10-26
+
+### 修复
+- 暗黑模式下手机图标变成实心白块：DSH 的 guide/tab 容器会给 `svg` 继承 `fill`，轮廓图标被填满。现在所有 outline 图标用 inline `style="fill:none"`（优先级高于容器 CSS），实心平台图标（Android/HarmonyOS/Apple）单独保留 `fill:currentColor`
+- 手机图标重绘：机身 + 听筒线 + Home 指示条，16px 下也能辨认
+
 ## 0.4.1 — 2026-10-26
 
 ### 修复
