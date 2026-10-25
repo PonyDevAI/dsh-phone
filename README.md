@@ -120,6 +120,9 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 | HarmonyOS 真机 | hdc | 截图轮询 1–2fps | tap / swipe / 按键 / 文字 | — |
 
 - iOS 依赖 macOS + Xcode；实时画面/输入需要 `idb`（`brew install facebook/fb/idb-companion` + `pip install fb-idb`），未装时只读预览。
+  - 如果 Homebrew 报 "Xcode alone is not sufficient on Tahoe"（需要 Command Line Tools），可改用官方 release 手工安装：
+    `gh release download v1.7.7 --repo facebook/idb --pattern 'idb-companion.macos-arm64.tar.gz'`，解压到 `~/.local/lib/idb-companion`，
+    再把 `idb_companion` / `idb-repl` 软链到 `~/.local/bin`；客户端 `python3 -m venv ~/.local/venvs/fb-idb && ~/.local/venvs/fb-idb/bin/pip install fb-idb`。
 - HarmonyOS 依赖 DevEco Studio（`Emulator` CLI）与 `hdc`；hdc 没有 screenrecord，只能截图轮询。
 - 物理 iPhone / iPad 不支持（Apple 未公开投屏/注入 API，Claude Code Desktop 也只支持模拟器）。
 
