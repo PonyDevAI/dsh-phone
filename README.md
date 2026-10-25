@@ -126,6 +126,13 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 - HarmonyOS 依赖 DevEco Studio（`Emulator` CLI）与 `hdc`；hdc 没有 screenrecord，只能截图轮询。
 - 物理 iPhone / iPad 不支持（Apple 未公开投屏/注入 API，Claude Code Desktop 也只支持模拟器）。
 
+## 验证状态
+
+- **iOS 模拟器**（iPhone Air / iOS 26.5）：create / boot / 截图 / idb H.264 流 / tap / Home 实测通过；像素→point 坐标换算用真实弹窗验证。
+- **HarmonyOS 模拟器**（HarmonyOS 7.0.0）：create / start / 截图 / tap / swipe / rotate / stop / delete 全链路实测通过。
+- **HarmonyOS 真机**（Mate 60 Pro，hdc）：截图 / keyEvent / tap / text 实测通过。
+- **Android**：真机与云手机的 tap / swipe / back / home / 截图 / H.264 流实测通过。
+
 ## 已知限制
 
 - Android 画面默认走 H.264 流（约 20–30fps）；没有 WebCodecs 的浏览器会回退到 1–2fps 轮询截图。

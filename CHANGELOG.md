@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.1 — 2026-10-26
+
+### 修复
+- 鸿蒙模拟器名称规则与 CLI 对齐：只允许字母、数字、空格、下划线 `_`、加号 `+`（之前允许连字符/中文，`-create` 会直接失败）；创建表单占位符改为 `dsh_phone_hos`
+- 鸿蒙模拟器 `start` 改为 detached 启动 + 截图 warm-up：`Emulator -start` 是常驻进程，之前前台等待导致 90s 超时；现在启动后等显示服务就绪再返回
+
+### 验证（0.4.1 发布前实测）
+- iOS 模拟器：create → boot → 截图 → H.264 流（idb，100 帧/3s）→ tap / Home 通过；像素→point（density=3）用真实弹窗按钮验证
+- HarmonyOS 模拟器：create → start（45s 含 warm-up）→ 截图 → tap / swipe → stop → delete 全链路通过
+- HarmonyOS 真机（Mate 60 Pro）：截图 / keyEvent / tap / text 通过
+
 ## 0.4.0 — 2026-10-26
 
 ### 新增
