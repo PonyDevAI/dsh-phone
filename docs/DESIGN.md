@@ -4,9 +4,7 @@
 > 参考 Codex Mobile Dev 的右侧设备面板：**顶上只有一行「设备下拉 + 几个图标」，下面整块留给设备画面**。
 > 本文是布局、命名与技术方案，**尚未开始写代码**。
 
-![设备列表](mockups/list.png)
-
-![设备画面](mockups/device.png)
+原型（离线 HTML，假数据，可用浏览器直接打开）：[`docs/mockups/mockup.html`](mockups/mockup.html)
 
 ---
 
@@ -65,12 +63,12 @@
 [ 选择设备 ▾ ]                              [刷新] [＋]
 ──────────────────────────────────────────────────────
 已连接
-  ▢ Pixel 7a      [USB]     34201JEHN07681          ›
-  ▢ Pixel 7a      [Wi-Fi]   100.107.25.26:5555      ›
-  ▢ 小米 13       [thor]    100.90.248.53:5555      ›
+  ▢ Pixel 7a      [USB]     SERIAL0123456789AB      ›
+  ▢ Pixel 7a      [Wi-Fi]   100.64.0.11:5555        ›
+  ▢ 小米 13       [thor]    100.64.0.12:5555        ›
 云手机
-  ☁ 云手机 pony             unicom-openclaw-pony:5555  ›
-  ☁ 云手机 test             unicom-openclaw-test:5555  ›
+  ☁ 云手机 A                node-a.example-tailnet.ts.net:5555  ›
+  ☁ 云手机 B                node-b.example-tailnet.ts.net:5555  ›
 ──────────────────────────────────────────────────────
 ● 5 台在线
 ```

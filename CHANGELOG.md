@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.2 — 2026-10-26
+
+### 变更
+- 隐私清理：文档、mockup、冒烟测试与离线 harness 里的真实设备序列号 / Tailscale CGNAT IP / 私有主机名统一替换为示例值
+- 新增 `scripts/check-privacy.mjs` 与 `scripts/check-shots.mjs` 门禁，接入 `npm run check`、CI 与 release workflow
+- npm `files` 的 `docs` 收紧为 `docs/*.md`，不再把 docs 截图 / mockup 图片打包进发布物
+- 截图：删除真实截图 `01-devices` / `02-preview` 与 mockups 图片，只保留由 `scripts/render-test.mjs` + 假 fixtures 重生成的 `03-overview`，并在 `docs/screenshots/MANIFEST.md` 登记来源
+
 ## 0.3.1 — 2026-10-25
 
 ### 修复
@@ -58,8 +66,8 @@
 - 常用连接目标：连接成功自动记录（`$DSH_HOME/phone/targets.json`，最近 12 条），未连接目标也显示在列表，点击直接 `adb connect`
 - `⋯ → adb 诊断`：adb 路径/版本、每台设备状态，可复制
 - 列表改为平铺，不再按「云手机」分组；只保留连接方式标签（USB / Wi-Fi / Tailscale / emulator）
-- Tailscale 判定：`unicom-openclaw-*`、`*.ts.net`、`100.64.0.0/10`
-- 真机验证：Pixel 7a 上 tap / swipe / 返回 / 主页 均已实测（点开「网络和互联网」「关于本机」，列表滚动）
+- Tailscale 判定：`*.ts.net`、`100.64.0.0/10`
+- 真机验证：Android 真机上 tap / swipe / 返回 / 主页 均已实测（点开「网络和互联网」「关于本机」，列表滚动）
 - H.264 实时预览：Host `POST /phone/stream` 直接 pipe `screenrecord --output-format=h264`；客户端 Annex-B → avcC → WebCodecs VideoDecoder → canvas，约 20–30fps
 - 不支持 WebCodecs 的浏览器自动回退截图轮询；`screen-info` 提供设备真实分辨率做坐标换算
 - 操作栏改为底部悬浮胶囊（HarmonyOS 风格三键 + 截图），不占画面高度；顶部设备下拉/清晰度/旋转/更多；断开连接收进设备菜单并二次确认

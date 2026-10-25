@@ -33,6 +33,12 @@ jobs:
           node scripts/smoke.mjs
           node scripts/check-i18n.mjs
 
+      - name: Privacy gate
+        run: node scripts/check-privacy.mjs
+
+      - name: Screenshots gate
+        run: node scripts/check-shots.mjs
+
       # Trusted Publishing（OIDC）：无需 NPM_TOKEN，凭 GitHub Actions 身份直接发布。
       # npm 包设置 → Trusted Publisher 已配置：
       #   Organization or user: PonyDevAI

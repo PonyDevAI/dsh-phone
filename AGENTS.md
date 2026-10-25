@@ -36,12 +36,18 @@ docs/DESIGN.md                架构与布局；docs/mockups 原型；docs/scree
 ## 3. 提交前必须通过
 
 ```bash
-npm run check        # 语法 + i18n 键一致性
+npm run check        # 语法 + i18n + 隐私/截图门禁
 npm run smoke        # 解析/白名单/targets/尺寸（无 adb 自动 SKIP）
 npm pack --dry-run   # 发布内容检查
 ```
 
 CI 重复执行以上检查；失败不合并。
+
+## 3.1 隐私与截图门禁（不可绕过）
+
+1. `docs/screenshots/`、`docs/mockups/` 下的图**只能**由 `scripts/render-test.mjs` + **假 fixtures** 生成，禁止提交真机 / 真实账户截图；
+2. docs 截图必须在 `docs/screenshots/MANIFEST.md` 登记来源（`- \`路径\` ← \`scripts/xxx.mjs\``），由 `scripts/check-shots.mjs` 强制；
+3. 提交前 `npm run check` 已包含 `scripts/check-privacy.mjs` + `scripts/check-shots.mjs` 隐私门禁；命中即失败，不要为通过而放宽规则。
 
 ## 4. 安全不变量（不可破坏）
 

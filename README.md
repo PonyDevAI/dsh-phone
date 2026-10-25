@@ -5,10 +5,6 @@
 
 DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是点手机。
 
-| 设备列表 | 预览画面 |
-|---|---|
-| ![设备列表](docs/screenshots/01-devices.png) | ![预览画面](docs/screenshots/02-preview.png) |
-
 ![完整界面](docs/screenshots/03-overview.png)
 
 ## 功能
@@ -21,7 +17,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 - **连接**：`adb connect <ip>:<port>`（无线调试、Tailscale 云手机）；连接过的目标自动记到 `$DSH_HOME/phone/targets.json`，未连接时也显示在列表里，点一下就直接连。
 - **诊断**：`⋯ → adb 诊断` 看 adb 路径/版本、每台设备状态，一键复制。
 - **更多**：电源、旋转、重新连接、adb 诊断、浮窗打开、复制 serial、断开。
-- 连接方式由 serial 判断：`usb:` 属性 → USB；`unicom-openclaw-*` 或 `100.64.0.0/10` → Tailscale；其余带端口 → Wi-Fi。
+- 连接方式由 serial 判断：`usb:` 属性 → USB；`*.ts.net` 或 `100.64.0.0/10` → Tailscale；其余带端口 → Wi-Fi。
 - 系统平台由 `getprop` 判断（`ro.build.version.harmony*` / `hw_sc.build.platform.version` → HarmonyOS，其余 Android）；iOS 图标等接入 WDA transport 后生效。
 - 没有分辨率/网速元数据栏，没有文字输入框。
 
@@ -29,7 +25,7 @@ DSH Web 插件：在右侧栏预览已连接的 Android 设备，点画面就是
 
 ```sh
 # 本地开发（link 到当前 clone）
-dsh plugin --profile web add link:/Users/pony/deepseek/plugins/dsh-phone
+dsh plugin --profile web add link:~/deepseek/plugins/dsh-phone
 
 # 从 npm（发布后）
 dsh plugin --profile web add @ponydev/dsh-phone
@@ -46,7 +42,7 @@ dsh plugin --profile web add @ponydev/dsh-phone
     - id: phone
       name: "@ponydev/dsh-phone"
       config:
-        adbPath: adb   # 或 /Users/pony/Library/Android/sdk/platform-tools/adb
+        adbPath: adb   # 或 ~/Library/Android/sdk/platform-tools/adb
         pollMs: 700
         streamTimeLimit: 180   # screenrecord 单次上限，到点自动续
         streamBitRate: 6000000 # 客户端清晰度会覆盖这两项
@@ -128,14 +124,14 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 ## 开发
 
 ```sh
-npm run check        # node --check 四个 lib 文件
+npm run check        # 语法 + i18n + 隐私/截图门禁
 npm run smoke        # 解析/白名单/真机 adb 冒烟
 node scripts/render-test.mjs [screenshot.png]
                      # 离线渲染列表 + 预览，输出 /tmp/dsh-phone-render.html/.png
 ```
 
-`scripts/render-test.mjs` 默认用 `/tmp/dsh-phone-shot.png` 作为画面占位；可以先用
-`adb -s <serial> exec-out screencap -p > /tmp/dsh-phone-shot.png` 生成。
+`scripts/render-test.mjs` 默认用 `/tmp/dsh-phone-shot.png` 作为画面占位。本地调试可以用真机截图，
+但**提交进 docs 的截图必须用合成占位图**（真机截图只放 /tmp，不进仓库）。
 
 ## 结构
 

@@ -15,11 +15,11 @@ const streamPath = process.argv[3] || '/tmp/p1-video.h264'
 const streamBase64 = existsSync(streamPath) ? readFileSync(streamPath).toString('base64') : ''
 
 const DEVICES = [
-  { serial: '34201JEHN07681', state: 'device', kind: 'usb', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
-  { serial: '100.107.25.26:5555', state: 'device', kind: 'tailscale', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
-  { serial: '100.90.248.53:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
-  { serial: 'unicom-openclaw-pony:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
-  { serial: 'unicom-openclaw-test:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
+  { serial: 'SERIAL0123456789AB', state: 'device', kind: 'usb', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157337' },
+  { serial: '100.64.0.11:5555', state: 'device', kind: 'tailscale', platform: 'android', model: 'Pixel 7a', product: 'lynx', device: 'lynx', transportId: '157244' },
+  { serial: '100.64.0.12:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
+  { serial: 'node-a.example-tailnet.ts.net:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
+  { serial: 'node-b.example-tailnet.ts.net:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
 ]
 
 const html = `<!doctype html>
@@ -98,7 +98,7 @@ window.fetch = async function (url, init) {
   if (target.endsWith('shot')) return new Response(bytes(), { status: 200, headers: { 'content-type': 'image/png' } })
   if (target.endsWith('disconnect')) return json({ ok: true, value: {} })
   if (target.endsWith('targets')) {
-    const targets = location.search.indexOf('nodevices') >= 0 ? [] : [{ address: 'unicom-openclaw-new:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }]
+    const targets = location.search.indexOf('nodevices') >= 0 ? [] : [{ address: 'node-c.example-tailnet.ts.net:5555', lastSeenAt: Date.now() }, { address: '192.168.1.50:5555', lastSeenAt: Date.now() }]
     return json({ ok: true, value: { targets } })
   }
   if (target.endsWith('targets/remove')) return json({ ok: true, value: { removed: true } })

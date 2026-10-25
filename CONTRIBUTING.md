@@ -24,7 +24,7 @@ launchctl kickstart -k gui/$(id -u)/local.deepseek-harness.web
 离线 UI 验证（不依赖宿主，也不需要会话）：
 
 ```bash
-# 先准备一张真实截图
+# 先准备一张画面占位图（本地调试可用真机截图；提交进 docs 的截图必须用合成占位图）
 adb -s <serial> exec-out screencap -p > /tmp/dsh-phone-shot.png
 npm run test-ui          # 输出 /tmp/dsh-phone-render.png
 open /tmp/dsh-phone-render.html
@@ -38,7 +38,7 @@ open '/tmp/dsh-phone-render.html#stream'
 ## 提交前检查
 
 ```bash
-npm run check        # 语法 + i18n 键一致性
+npm run check        # 语法 + i18n + 隐私/截图门禁
 npm run smoke        # 解析/白名单/targets/尺寸（无 adb 自动 SKIP）
 npm pack --dry-run   # 发布内容检查
 ```
@@ -49,5 +49,6 @@ npm pack --dry-run   # 发布内容检查
 - serial 必须先过 `adb devices` 列表校验；不要假设云手机型号/分辨率（用 `wm size`）。
 - 不新增运行时依赖；不引入构建工具。
 - 颜色只用 `--dsw-*` token，文案走 zh/en 字典；不做元数据栏、不做文字输入。
-- 真实设备截图不要提交到仓库；docs 截图用合成素材生成。
+- **截图只能由 `scripts/render-test.mjs` + 假 fixtures 生成**；不要把真机 / 真实账户截图提交到仓库。
+- docs 截图必须在 `docs/screenshots/MANIFEST.md` 登记来源；提交前 `npm run check` 含隐私门禁（`check-privacy` + `check-shots`），命中即失败。
 - Conventional Commits：`feat:` / `fix:` / `docs:` / `ci:` / `chore:` / `refactor:`；不写 AI 署名。

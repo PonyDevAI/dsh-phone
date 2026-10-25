@@ -22,10 +22,10 @@ function eq(name, actual, expected) {
 
 // ---------------------------------------------------------------- fixtures
 const SAMPLE = `List of devices attached
-34201JEHN07681         device usb:17825792X product:lynx model:Pixel_7a device:lynx transport_id:157337
-100.107.25.26:5555     device product:lynx model:Pixel_7a device:lynx transport_id:157244
-100.90.248.53:5555     device product:thor model:2203121C device:thor transport_id:94422
-unicom-openclaw-pony:5555 device product:thor model:2203121C device:thor transport_id:64698
+SERIAL0123456789AB         device usb:17825792X product:lynx model:Pixel_7a device:lynx transport_id:157337
+100.64.0.11:5555     device product:lynx model:Pixel_7a device:lynx transport_id:157244
+100.64.0.12:5555     device product:thor model:2203121C device:thor transport_id:94422
+node-a.example-tailnet.ts.net:5555 device product:thor model:2203121C device:thor transport_id:64698
 emulator-5554          device product:sdk_gphone64_arm64 model:sdk_gphone64_arm64 device:emu64a transport_id:9
 XYZ123                 unauthorized usb:1-1 transport_id:3
 OFFLINE1               offline transport_id:4
@@ -33,23 +33,23 @@ OFFLINE1               offline transport_id:4
 
 const devices = parseDevices(SAMPLE)
 eq('device count', devices.length, 7)
-eq('usb serial', devices[0].serial, '34201JEHN07681')
+eq('usb serial', devices[0].serial, 'SERIAL0123456789AB')
 eq('usb kind', devices[0].kind, 'usb')
 eq('usb model', devices[0].model, 'Pixel 7a')
-eq('tailscale ip kind', devices[1].kind, 'tailscale') // 100.107.25.26 是 Tailscale CGNAT
+eq('tailscale ip kind', devices[1].kind, 'tailscale') // 100.64.0.11 是 Tailscale CGNAT
 eq('tailscale dns kind', devices[3].kind, 'tailscale')
 eq('emulator kind', devices[4].kind, 'emulator')
 eq('unauthorized state', devices[5].state, 'unauthorized')
 eq('offline state', devices[6].state, 'offline')
 
 ok('junk lines ignored', parseDevices('* daemon started successfully\n\n').length === 0)
-ok('serial regex accepts cloud name', SERIAL_RE.test('unicom-openclaw-pony:5555'))
+ok('serial regex accepts cloud name', SERIAL_RE.test('node-a.example-tailnet.ts.net:5555'))
 ok('serial regex rejects shell', !SERIAL_RE.test('x; rm -rf /'))
 ok('address regex accepts ipv4', ADDRESS_RE.test('192.168.1.5:5555'))
 ok('address regex rejects text', !ADDRESS_RE.test('hello world'))
-eq('classify unknown defaults usb', classifyDevice('34201JEHN07681', {}), 'usb')
-eq('classify cgnat as tailscale', classifyDevice('100.90.248.53:5555', {}), 'tailscale')
-eq('classify dns as tailscale', classifyDevice('unicom-openclaw-test:5555', {}), 'tailscale')
+eq('classify unknown defaults usb', classifyDevice('SERIAL0123456789AB', {}), 'usb')
+eq('classify cgnat as tailscale', classifyDevice('100.64.0.12:5555', {}), 'tailscale')
+eq('classify dns as tailscale', classifyDevice('node-b.example-tailnet.ts.net:5555', {}), 'tailscale')
 eq('classify plain ip as wifi', classifyDevice('192.168.1.7:5555', {}), 'wifi')
 eq('getprop parse', parseGetprop('[ro.product.brand]: [google]\n[ro.build.version.release]: [15]\n')['ro.product.brand'], 'google')
 eq('platform android', platformFromProps({ 'ro.product.brand': 'google', 'ro.build.version.release': '15' }), 'android')
@@ -92,14 +92,14 @@ const dir = mkdtempSync(join(tmpdir(), 'dsh-phone-'))
 try {
   const store = createTargetStore(join(dir, 'targets.json'))
   eq('targets empty', await store.list(), [])
-  await store.record('100.90.248.53:5555')
-  await store.record('unicom-openclaw-test:5555')
-  await store.record('100.90.248.53:5555')
+  await store.record('100.64.0.12:5555')
+  await store.record('node-b.example-tailnet.ts.net:5555')
+  await store.record('100.64.0.12:5555')
   const list = await store.list()
-  eq('targets dedupe + latest first', list.map((item) => item.address), ['100.90.248.53:5555', 'unicom-openclaw-test:5555'])
+  eq('targets dedupe + latest first', list.map((item) => item.address), ['100.64.0.12:5555', 'node-b.example-tailnet.ts.net:5555'])
   ok('targets timestamp', typeof list[0].lastSeenAt === 'number')
-  await store.remove('100.90.248.53:5555')
-  eq('targets remove', (await store.list()).map((item) => item.address), ['unicom-openclaw-test:5555'])
+  await store.remove('100.64.0.12:5555')
+  eq('targets remove', (await store.list()).map((item) => item.address), ['node-b.example-tailnet.ts.net:5555'])
   eq('targets rejects bad address', await store.record('x; rm -rf /'), null)
 } finally {
   rmSync(dir, { recursive: true, force: true })
