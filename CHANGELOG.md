@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.4.0 — 2026-10-26
+
+### 新增
+- **iOS 模拟器**：`xcrun simctl` 列表 / 创建 / boot / 关机 / 删除 / 截图；面板可自动进入并轮询预览
+- **HarmonyOS 模拟器**：DevEco `Emulator` CLI 列表 / 创建 / 启动 / 停止 / 删除 / 截图 / 点击 / 滑动 / 旋转 / 电源
+- **HarmonyOS 真机**：`hdc` 设备列表 / 截图 / 点击 / 滑动 / 按键 / 文字输入
+- 「添加设备」菜单：Android 连接 / 创建 iOS 模拟器 / 创建鸿蒙模拟器
+- 设备操作菜单：iOS 模拟器关机 / 删除，鸿蒙模拟器停止 / 删除
+- 平台图标与标签：iOS 模拟器、HarmonyOS 模拟器 / 真机
+
+### 变更
+- Host `/phone/*` 按设备 transport 分发（adb / simctl / emulator / hdc）；`health` 返回 iOS 与 HarmonyOS 能力
+- 鸿蒙暂不支持实时流，自动回退截图轮询（iOS 实时流与输入需要 idb，未装时只读预览）
+- 新增 `lib/ios.js`、`lib/hos.js` 与 `scripts/hos-smoke.mjs`
+
 ## 0.3.2 — 2026-10-26
 
 ### 变更

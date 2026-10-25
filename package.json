@@ -1,16 +1,19 @@
 {
   "name": "@ponydev/dsh-phone",
-  "version": "0.3.2",
-  "description": "DSH Web 插件：右侧栏预览并点按控制已连接的 Android 设备（adb）",
+  "version": "0.4.0",
+  "description": "DSH Web 插件：右侧栏预览并控制 Android / iOS 模拟器 / HarmonyOS 设备与模拟器",
   "keywords": [
     "dsh",
     "dsh-plugin",
     "deepseek-harness",
     "android",
     "adb",
+    "ios",
+    "simulator",
+    "harmonyos",
+    "hdc",
     "phone",
-    "mirror",
-    "scrcpy"
+    "mirror"
   ],
   "license": "MIT",
   "author": "Pony <205503242+jmaubay7@users.noreply.github.com>",
@@ -43,11 +46,12 @@
     "node": ">=22.5"
   },
   "scripts": {
-    "check": "node --check lib/adb.js && node --check lib/targets.js && node --check lib/stream.js && node --check lib/transport.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs && node scripts/check-privacy.mjs && node scripts/check-shots.mjs",
+    "check": "node --check lib/adb.js && node --check lib/targets.js && node --check lib/stream.js && node --check lib/transport.js && node --check lib/ios.js && node --check lib/hos.js && node --check lib/index.js && node --check lib/client.js && node scripts/check-i18n.mjs && node scripts/check-privacy.mjs && node scripts/check-shots.mjs",
     "smoke": "node scripts/smoke.mjs",
     "check-i18n": "node scripts/check-i18n.mjs",
     "release-notes": "node scripts/release-notes.mjs",
-    "test-ui": "node scripts/render-test.mjs"
+    "test-ui": "node scripts/render-test.mjs",
+    "smoke:hos": "node scripts/hos-smoke.mjs"
   },
   "dsh": {
     "manifestVersion": 1,

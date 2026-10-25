@@ -244,3 +244,23 @@ Host 侧定义 `PhoneTransport { id, list, connect, shot, input }`：
 2. 设备多时：默认「一个 tab 内切换」（本文）还是「每台设备一个 tab」？
 
 （图标位置 = 会话头部工具区、名字 = `dsh-phone`、无元数据列、无输入框，已按你的意思定下。）
+
+
+## 多平台 transport（0.4.0）
+
+```
+/phone/*  ── resolveDevice(serial) ──┬── adb       Android 真机 / 云手机（H.264 screenrecord）
+                                     ├── simctl    iOS 模拟器（截图；idb 提供 H.264 + HID）
+                                     ├── emulator  HarmonyOS 模拟器（DevEco Emulator CLI）
+                                     └── hdc       HarmonyOS 真机（snapshot_display + uitest）
+```
+
+- **iOS**：只支持模拟器。生命周期/创建走公开 `xcrun simctl`；实时画面与点击/输入走 `idb`
+  （Meta FBSimulatorControl，Claude Code Desktop 内部也是 CoreSimulator/SimulatorKit 私有栈）。
+  idb 的 `video-stream --format h264` 输出 Annex-B，直接复用客户端的 WebCodecs 管线；
+  `idb describe` 的 `screen_dimensions.density` 用于像素 → point 坐标换算。
+- **HarmonyOS 模拟器**：`Emulator -list/-create/-start/-stop/-delete/-screenshot/-click/-slide/-rotation/-power`；
+  按键与文字借道 hdc `uitest uiInput`（模拟器没有对应 CLI）。
+- **HarmonyOS 真机**：`hdc list targets` + `snapshot_display` + `uitest uiInput`；没有 screenrecord，只能截图轮询。
+- **物理 iPhone / iPad 不支持**：Apple 没有公开投屏/HID 注入 API（Claude 同样只做模拟器；
+  Codex 用 Xcode 27 CoreDevice 私有 HEVC + UniversalHID，不在本项目范围）。

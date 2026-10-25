@@ -110,22 +110,35 @@ DSH 右侧栏第一次打开是**视口宽度的 45%**（1440 屏 ≈ 648px）�
 - 顶部：设备下拉、旋转、更多（电源、重连、诊断、浮窗、复制 serial、设备列表）。
 - 「断开连接」放在设备下拉菜单里，需要点两次确认（防止误触）。
 
+## 平台支持
+
+| 平台 | 后端 | 画面 | 操作 | 创建 |
+|---|---|---|---|---|
+| Android 真机 / 云手机 | adb（USB / TCP / Tailscale） | H.264 20–30fps | tap / swipe / 按键 | — |
+| iOS 模拟器 | `xcrun simctl` + idb（可选） | 截图轮询 1–2fps；装 idb 后 H.264 | 装 idb 后 tap / swipe / 按键 | ✅ 选择机型 + 运行时 |
+| HarmonyOS 模拟器 | DevEco `Emulator` CLI | 截图轮询 1–2fps | tap / swipe / 旋转 / 电源 / 按键 / 文字 | ✅ 选择系统镜像 |
+| HarmonyOS 真机 | hdc | 截图轮询 1–2fps | tap / swipe / 按键 / 文字 | — |
+
+- iOS 依赖 macOS + Xcode；实时画面/输入需要 `idb`（`brew install facebook/fb/idb-companion` + `pip install fb-idb`），未装时只读预览。
+- HarmonyOS 依赖 DevEco Studio（`Emulator` CLI）与 `hdc`；hdc 没有 screenrecord，只能截图轮询。
+- 物理 iPhone / iPad 不支持（Apple 未公开投屏/注入 API，Claude Code Desktop 也只支持模拟器）。
+
 ## 已知限制
 
-- 画面默认走 H.264 流（约 20–30fps）；没有 WebCodecs 的浏览器会回退到 1–2fps 轮询截图。
-- 流是 `screenrecord`，没有声音；单次 180s 上限由 Host 自动续接（断开 <1s）。
+- Android 画面默认走 H.264 流（约 20–30fps）；没有 WebCodecs 的浏览器会回退到 1–2fps 轮询截图。
+- Android 流是 `screenrecord`，没有声音；单次 180s 上限由 Host 自动续接（断开 <1s）。
 - 单个右侧栏 tab，设备在 tab 内切换；不支持同一 pane 多设备并排（后续可开 `multiple`）。
-- 没有文字输入（`adb shell input text` 只支持 ASCII，中文要 ADBKeyboard）。
+- Android 文字输入（`adb shell input text` 只支持 ASCII，中文要 ADBKeyboard）；鸿蒙用 `uitest uiInput text`。
 - 「已保存」目标是地址级记录，没有备注名；显示名直接是 `ip:port` / 主机名。
-- 只支持 Android/adb；hdc（鸿蒙）和 iOS 走 `PhoneTransport` 接口后加。
 - 右侧栏是 per-session 的，没有会话的页面不显示手机图标。
-- 需要设备上已授权 USB 调试；`unauthorized` 会提示去手机上点允许。
+- Android 需要设备上已授权 USB 调试；`unauthorized` 会提示去手机上点允许。
 
 ## 开发
 
 ```sh
 npm run check        # 语法 + i18n + 隐私/截图门禁
 npm run smoke        # 解析/白名单/真机 adb 冒烟
+npm run smoke:hos    # 鸿蒙 Emulator CLI / hdc 只读冒烟（需要 DevEco）
 node scripts/render-test.mjs [screenshot.png]
                      # 离线渲染列表 + 预览，输出 /tmp/dsh-phone-render.html/.png
 ```
@@ -136,9 +149,11 @@ node scripts/render-test.mjs [screenshot.png]
 ## 结构
 
 ```
-lib/index.js      Host：/phone 路由、认证围栏、错误映射
-lib/adb.js        adb 定位 / devices 解析 / 截图 / 输入 / 串行化
-lib/transport.js  PhoneTransport 接口 + AdbTransport（hdc / iOS 后加）
+lib/index.js      Host：/phone 路由、认证围栏、按 transport 分发
+lib/adb.js        Android：adb 定位 / devices 解析 / 截图 / 输入 / 串行化
+lib/ios.js        iOS 模拟器：simctl 生命周期/创建/截图 + idb 实时流/输入
+lib/hos.js        HarmonyOS：DevEco Emulator CLI + hdc（真机）
+lib/transport.js  PhoneTransport 接口 + AdbTransport
 lib/client.js     ModuleLoader bundle：tab 类型、列表、预览、i18n、样式
 cordis.patch.yml  bundle 补丁
 scripts/          smoke + 离线渲染

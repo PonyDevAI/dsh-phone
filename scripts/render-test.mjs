@@ -20,6 +20,10 @@ const DEVICES = [
   { serial: '100.64.0.12:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '94422' },
   { serial: 'node-a.example-tailnet.ts.net:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '64698' },
   { serial: 'node-b.example-tailnet.ts.net:5555', state: 'device', kind: 'tailscale', platform: 'android', model: '2203121C', product: 'thor', device: 'thor', transportId: '91206' },
+  { serial: 'AAAAAAAA-BBBB-CCCC-DDDD-EEEEEEEEEEEE', state: 'device', kind: 'simulator', platform: 'ios', model: 'iPhone Air', transport: 'simctl', runtime: 'iOS 26.5' },
+  { serial: 'BBBBBBBB-CCCC-DDDD-EEEE-FFFFFFFFFFFF', state: 'offline', kind: 'simulator', platform: 'ios', model: 'iPhone 17 Pro', transport: 'simctl', runtime: 'iOS 26.5' },
+  { serial: 'HOS-Mate-60-Pro', state: 'device', kind: 'simulator', platform: 'harmony', model: 'Mate 60 Pro', transport: 'emulator', width: 1260, height: 2720, osVersion: 'HarmonyOS 7.0.0(26.0.0)' },
+  { serial: '0123456789ABCDEF', state: 'device', kind: 'usb', platform: 'harmony', model: 'HUAWEI Mate 60', transport: 'hdc', width: 1260, height: 2720 },
 ]
 
 const html = `<!doctype html>
@@ -70,7 +74,14 @@ function bytes() {
 window.fetch = async function (url, init) {
   const target = String(url)
   const json = (payload) => new Response(JSON.stringify(payload), { status: 200, headers: { 'content-type': 'application/json' } })
-  if (target.endsWith('health')) return json({ ok: true, value: { adb: { bin: 'adb', version: '1.0.41' }, devices: DEVICES.length } })
+  if (target.endsWith('health')) return json({ ok: true, value: { adb: { bin: 'adb', version: '1.0.41' }, devices: DEVICES.length, ios: { available: true, idb: true }, harmony: { emulator: { available: true, version: '26.0.0.402' }, hdc: { available: true, version: '3.2.0f' } } } })
+  if (target.endsWith('ios/types')) return json({ ok: true, value: { types: [{ identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro', name: 'iPhone 17 Pro' }, { identifier: 'com.apple.CoreSimulator.SimDeviceType.iPhone-Air', name: 'iPhone Air' }] } })
+  if (target.endsWith('ios/runtimes')) return json({ ok: true, value: { runtimes: [{ identifier: 'com.apple.CoreSimulator.SimRuntime.iOS-26-5', name: 'iOS 26.5', version: '26.5' }] } })
+  if (target.endsWith('ios/create')) return json({ ok: true, value: { serial: 'CCCCCCCC-DDDD-EEEE-FFFF-000000000000', name: 'dsh-phone' } })
+  if (target.endsWith('ios/boot') || target.endsWith('ios/shutdown') || target.endsWith('ios/delete')) return json({ ok: true, value: {} })
+  if (target.endsWith('hos/images')) return json({ ok: true, value: { images: [{ osVersion: 'HarmonyOS 7.0.0(26.0.0)', deviceType: 'phone', downloaded: true }, { osVersion: 'HarmonyOS 6.1.1(24)', deviceType: 'phone', downloaded: false }] } })
+  if (target.endsWith('hos/create')) return json({ ok: true, value: { serial: 'dsh-phone-hos', state: 'device', model: 'dsh-phone-hos', platform: 'harmony', kind: 'simulator', transport: 'emulator', width: 1260, height: 2720 } })
+  if (target.endsWith('hos/start') || target.endsWith('hos/stop') || target.endsWith('hos/delete')) return json({ ok: true, value: {} })
   if (target.endsWith('devices')) {
     const devices = location.search.indexOf('nodevices') >= 0 ? [] : DEVICES
     return json({ ok: true, value: { devices, at: Date.now() } })

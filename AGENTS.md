@@ -6,13 +6,15 @@
 
 DSH Web 插件：**右侧栏预览并点按控制已连接的 Android 设备**（adb），H.264 实时流 + 无 WebCodecs 时回退截图轮询。
 
-**能力边界**：只认 adb（Android）。hdc（鸿蒙）与 iOS 走 `lib/transport.js` 的 `PhoneTransport` 接口后续接入；UI 容器固定用 DSH 原生 `sidebar-right`，不自造悬浮层。
+**能力边界**：Android 走 adb；iOS 只做**模拟器**（simctl 生命周期 + idb 实时/输入，物理 iPhone 不支持）；HarmonyOS 模拟器走 DevEco `Emulator` CLI、真机走 hdc。UI 容器固定用 DSH 原生 `sidebar-right`，不自造悬浮层。
 
 ## 1. 目录与职责
 
 ```
 lib/index.js      Host 入口（/phone/* RPC、connection.admit 围栏、targets、stream 路由、错误映射）
 lib/adb.js        adb 定位 / devices 解析 / getprop 平台 / wm size / 截图 / 输入 / 串行化
+lib/ios.js        iOS 模拟器：simctl 列表/创建/boot/删除/截图 + idb H.264 流/输入
+lib/hos.js        HarmonyOS：Emulator CLI（生命周期/创建/截图/点击）+ hdc（真机/截图/uitest）
 lib/stream.js     screenrecord H.264 子进程（续接、背压、断开 kill）、清晰度预设、按比例算 size
 lib/targets.js    常用连接目标（$DSH_HOME/phone/targets.json，0600，只存地址/时间）
 lib/transport.js  PhoneTransport 接口 + AdbTransport（hdc / iOS 的挂载点）
@@ -22,6 +24,7 @@ scripts/smoke.mjs            离线冒烟（解析/白名单/targets/尺寸计�
 scripts/check-i18n.mjs       zh/en 字典键一致 + 代码用键存在
 scripts/release-notes.mjs    从 CHANGELOG 抽取当前版本条目
 scripts/render-test.mjs      离线渲染 harness（列表/预览/浮窗/诊断/流五种状态）
+scripts/hos-smoke.mjs        鸿蒙 transport 只读冒烟（Emulator CLI + hdc）
 docs/DESIGN.md                架构与布局；docs/mockups 原型；docs/screenshots 截图
 ```
 

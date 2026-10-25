@@ -3,6 +3,10 @@
       name: "@ponydev/dsh-phone"
       config:
         adbPath: adb
+        xcrun: xcrun
+        idb: idb
+        hdcPath: hdc
+        emulatorPath: ''
         pollMs: 700
         streamTimeLimit: 180
         streamBitRate: 6000000
